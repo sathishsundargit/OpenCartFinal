@@ -1,11 +1,16 @@
 package pageObjects;
 
+import java.time.Duration;
 import java.util.List;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class AddAddressPage extends BasePage {
 
@@ -68,26 +73,64 @@ public class AddAddressPage extends BasePage {
 
 	// Below are the dynamic method.
 
-	public void selCountry(String countryName) {
-		Select selectCountry = new Select(drpdwnCountry);
+	public void safeSelectCountry(String countryName) {
+		try {
+			// Wait until the country dropdown is visible
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+			wait.until(ExpectedConditions.visibilityOf(drpdwnCountry));
 
-		List<WebElement> countryOptions = selectCountry.getOptions();
-		for (WebElement option : countryOptions) {
-			if (option.getText().equalsIgnoreCase(countryName)) {
-				selectCountry.selectByVisibleText(countryName);
-				break;
+			Select selectCountry = new Select(drpdwnCountry);
+			List<WebElement> countryOptions = selectCountry.getOptions();
+
+			for (WebElement option : countryOptions) {
+				if (option.getText().equalsIgnoreCase(countryName)) {
+					selectCountry.selectByVisibleText(countryName);
+					break;
+				}
+			}
+		} catch (StaleElementReferenceException e) {
+			System.out.println("Element went stale, retrying...");
+			// Re-find the element and retry selecting the country
+			WebElement countryDropdown = driver.findElement(By.id("input-country"));
+			Select selectCountry = new Select(countryDropdown);
+			List<WebElement> countryOptions = selectCountry.getOptions();
+
+			for (WebElement option : countryOptions) {
+				if (option.getText().equalsIgnoreCase(countryName)) {
+					selectCountry.selectByVisibleText(countryName);
+					break;
+				}
 			}
 		}
 	}
 
-	public void selZone(String zoneName) {
-		Select selectZone = new Select(drpRegion);
+	public void safeSelectZone(String zoneName) {
+		try {
+			// Wait until the zone dropdown is visible
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+			wait.until(ExpectedConditions.visibilityOf(drpRegion));
 
-		List<WebElement> zoneOptions = selectZone.getOptions();
-		for (WebElement option : zoneOptions) {
-			if (option.getText().equalsIgnoreCase(zoneName)) {
-				selectZone.selectByVisibleText(zoneName);
-				break;
+			Select selectZone = new Select(drpRegion);
+			List<WebElement> zoneOptions = selectZone.getOptions();
+
+			for (WebElement option : zoneOptions) {
+				if (option.getText().equalsIgnoreCase(zoneName)) {
+					selectZone.selectByVisibleText(zoneName);
+					break;
+				}
+			}
+		} catch (StaleElementReferenceException e) {
+			System.out.println("Element went stale, retrying...");
+			// Re-find the element and retry selecting the zone
+			WebElement zoneDropdown = driver.findElement(By.id("input-zone"));
+			Select selectZone = new Select(zoneDropdown);
+			List<WebElement> zoneOptions = selectZone.getOptions();
+
+			for (WebElement option : zoneOptions) {
+				if (option.getText().equalsIgnoreCase(zoneName)) {
+					selectZone.selectByVisibleText(zoneName);
+					break;
+				}
 			}
 		}
 	}

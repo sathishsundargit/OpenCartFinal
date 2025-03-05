@@ -37,21 +37,16 @@ public class TC004_AddressBookTest extends BaseClass {
 			aadp.setAddressAdd(randomAlphaNumeric());
 			aadp.setCityAdd(randomString());
 			aadp.setPostCode(randomNumber());
-			aadp.selCountry("Andorra");
-			/*
-			 * WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-			 * wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("input-zone"))
-			 * );
-			 */
-			Thread.sleep(3000);
-			aadp.selZone("Canillo");
+			aadp.safeSelectCountry("Andorra");
+			aadp.safeSelectZone("Canillo");
 			aadp.clickCont();
 
 			boolean AddEntryPage = abp.IsAddressBookPageExists();
 			Assert.assertTrue(AddEntryPage);
 
 		} catch (Exception e) {
-			Assert.fail();
+			e.printStackTrace(); // Logs the error stack trace for debugging
+			Assert.fail("Test failed due to exception: " + e.getMessage());
 		}
 
 	}
