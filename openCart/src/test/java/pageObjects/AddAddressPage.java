@@ -1,5 +1,7 @@
 package pageObjects;
 
+import java.util.List;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -55,14 +57,39 @@ public class AddAddressPage extends BasePage {
 		txtPostCode.sendKeys(pCodeAdd);
 	}
 
-	public void selCountry() {
-		Select dropDownCtry = new Select(drpdwnCountry);
-		dropDownCtry.selectByVisibleText("Algeria");
+	// Below are the Static method
+	/*
+	 * public void selCountry() { Select dropDownCtry = new Select(drpdwnCountry);
+	 * dropDownCtry.selectByVisibleText("Algeria"); }
+	 * 
+	 * public void selZone() { Select dropZone = new Select(drpRegion);
+	 * dropZone.selectByVisibleText("Biskra"); }
+	 */
+
+	// Below are the dynamic method.
+
+	public void selCountry(String countryName) {
+		Select selectCountry = new Select(drpdwnCountry);
+
+		List<WebElement> countryOptions = selectCountry.getOptions();
+		for (WebElement option : countryOptions) {
+			if (option.getText().equalsIgnoreCase(countryName)) {
+				selectCountry.selectByVisibleText(countryName);
+				break;
+			}
+		}
 	}
 
-	public void selZone() {
-		Select dropZone = new Select(drpRegion);
-		dropZone.selectByVisibleText("Biskra");
+	public void selZone(String zoneName) {
+		Select selectZone = new Select(drpRegion);
+
+		List<WebElement> zoneOptions = selectZone.getOptions();
+		for (WebElement option : zoneOptions) {
+			if (option.getText().equalsIgnoreCase(zoneName)) {
+				selectZone.selectByVisibleText(zoneName);
+				break;
+			}
+		}
 	}
 
 	public void clickCont() {

@@ -37,8 +37,14 @@ public class TC004_AddressBookTest extends BaseClass {
 			aadp.setAddressAdd(randomAlphaNumeric());
 			aadp.setCityAdd(randomString());
 			aadp.setPostCode(randomNumber());
-			aadp.selCountry();
-			aadp.selZone();
+			aadp.selCountry("Andorra");
+			/*
+			 * WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+			 * wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("input-zone"))
+			 * );
+			 */
+			Thread.sleep(3000);
+			aadp.selZone("Canillo");
 			aadp.clickCont();
 
 			boolean AddEntryPage = abp.IsAddressBookPageExists();
