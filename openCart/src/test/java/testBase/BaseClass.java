@@ -11,12 +11,14 @@ import java.util.Properties;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -72,9 +74,49 @@ public class BaseClass {
 	}
 
 	@AfterClass(groups = { "Sanity", "Regression", "Master" })
-	public void tearDown() throws InterruptedException {
-		Thread.sleep(10000);
-		driver.quit();
+	public void tearDown() {
+		// This ensures that the driver object is not null. It prevents
+		// NullPointerException if the driver is uninitialized or already closed.
+		if (driver != null) {
+			// Duration.ofSeconds(10) waits for up to 10 seconds before throwing a
+			// TimeoutException if the condition is not met.
+			WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+			/*
+			 * Here’s what happens:
+			 * 
+			 * wait.until() waits until the provided condition is true. * Lambda Expression
+			 * (webDriver -> {}): This is a concise way to pass a custom condition.
+			 * 
+			 * (JavascriptExecutor): Converts the WebDriver instance to JavascriptExecutor
+			 * (an interface for executing JavaScript in the browser).
+			 * 
+			 * executeScript("return document.readyState"):
+			 * 
+			 * Executes a small piece of JavaScript in the browser. document.readyState is a
+			 * property that tells the loading state of a webpage. It can have three
+			 * possible values: "loading": Document is still loading. "interactive": DOM is
+			 * parsed but sub-resources (like images) are still loading. "complete": Page
+			 * and all resources (CSS, images, etc.) are fully loaded. Condition: It waits
+			 * until document.readyState is "complete".
+			 * 
+			 * ✅ Why do we need this?
+			 * 
+			 * It ensures that the page is fully loaded before we attempt to quit the
+			 * browser. This helps prevent issues where the driver tries to quit while the
+			 * page is still loading
+			 */
+			wait.until(webDriver -> ((JavascriptExecutor) webDriver).executeScript("return document.readyState")
+					.equals("complete"));
+
+			/*
+			 * driver.quit(): Closes all open browser windows and ends the WebDriver
+			 * session. Use driver.quit() instead of driver.close() because: driver.close()
+			 * closes only one window. driver.quit() completely shuts down the browser.
+			 */
+			driver.quit();
+			System.out.println("Browser closed successfully");
+		}
+
 	}
 
 	public String randomString() {
